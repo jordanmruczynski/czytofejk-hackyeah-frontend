@@ -6,7 +6,6 @@ Przykładowe dane testowe, propaganda/dezinformacja:
 Link:
 https://www.youtube.com/watch?v=pNhXuHsAu0s 
 
-Treść:
 Oczywiście zaraz będą mówili, że że to jest narracja rosyjska i tak dalej i tak dalej, ale ja naprawdę mam wątpliwości. Jeżeli ze strony Kijowa, proszę państwa, tam leciały drony, ileś tam tych dronów, bo to podobno falowy taki nalot był i proszę państwa 600 km od naszej granicy, taki dron leci z prędkością 160, 170, no maksymalnie 180 km/h, to ile on godzin leciał, żeby do Polski dolecieć? Ja widzę w tym, proszę państwa, jakąś wielką powiedziałbym polityczną niedoskonałość, bo wczoraj akurat prezydent Nawrocki powiedział, że nie puścimy wojska polskiego na Ukrainę. No i macie według mnie
 
 Przykładowy losowy artykuł onetu (prawdziwy):
