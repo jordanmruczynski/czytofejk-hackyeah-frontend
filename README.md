@@ -1,15 +1,30 @@
-Aplikacja została zdeployowana na środowisku vercel i jest dostępna pod adresem:
-https://czytofejk-hackyeah-frontend.vercel.app/
+# App communication
 
+*Automatically synced with your [v0.app](https://v0.app) deployments*
 
-Przykładowe dane testowe, propaganda/dezinformacja:
-Link:
-https://www.youtube.com/watch?v=pNhXuHsAu0s 
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/joromruc-2316s-projects/v0-app-communication)
+[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/UeTTCZ62DMd)
 
-Oczywiście zaraz będą mówili, że że to jest narracja rosyjska i tak dalej i tak dalej, ale ja naprawdę mam wątpliwości. Jeżeli ze strony Kijowa, proszę państwa, tam leciały drony, ileś tam tych dronów, bo to podobno falowy taki nalot był i proszę państwa 600 km od naszej granicy, taki dron leci z prędkością 160, 170, no maksymalnie 180 km/h, to ile on godzin leciał, żeby do Polski dolecieć? Ja widzę w tym, proszę państwa, jakąś wielką powiedziałbym polityczną niedoskonałość, bo wczoraj akurat prezydent Nawrocki powiedział, że nie puścimy wojska polskiego na Ukrainę. No i macie według mnie
+## Overview
 
-Przykładowy losowy artykuł onetu (prawdziwy):
-https://wiadomosci.onet.pl/kraj/emocje-w-trakcie-konferencji-zurka-nie-uda-sie-panu-wyprowadzic-mnie-z-rownowagi/d22pkwg?utm_source=wiadomosci.onet.pl_viasg_wiadomosci&utm_medium=referal&utm_campaign=leo_automatic&srcc=undefined&utm_v=2
+This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
+Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
 
-Przykładowy obraz ai wykorzystany przy jednym z oszustw, w ten sposób wyszukują seniorów reagujący na takie treści, następnie oszuści zaczynają do nich pisać.
-![000KLBQNJIYDWIVS-C322-F4](https://github.com/user-attachments/assets/2f18c5c9-e806-4682-97f3-42146aa65542)
+## Deployment
+
+Your project is live at:
+
+**[https://vercel.com/joromruc-2316s-projects/v0-app-communication](https://vercel.com/joromruc-2316s-projects/v0-app-communication)**
+
+## Build your app
+
+Continue building your app on:
+
+**[https://v0.app/chat/projects/UeTTCZ62DMd](https://v0.app/chat/projects/UeTTCZ62DMd)**
+
+## How It Works
+
+1. Create and modify your project using [v0.app](https://v0.app)
+2. Deploy your chats from the v0 interface
+3. Changes are automatically pushed to this repository
+4. Vercel deploys the latest version from this repository
