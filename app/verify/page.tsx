@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -23,8 +23,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { createClient } from "@/lib/supabase/client"
-import Link from "next/link"
 
 const translations = {
   pl: {
@@ -51,11 +49,9 @@ const translations = {
     },
     textVerification: {
       title: "Wykrywanie Dezinformacji",
-      description:
-        "Analizuj skopiowaną treść tekstową, bądź podaj link url do YouTube, czy strony internetowej, aby sprawdzić je pod kątem potencjalnej dezinformacji",
+      description: "Analizuj skopiowaną treść tekstową, bądź podaj link url do YouTube, czy strony internetowej, aby sprawdzić je pod kątem potencjalnej dezinformacji",
       textContent: "Treść Tekstowa lub URL",
-      placeholder:
-        "Wklej tekst lub URL (YouTube, artykuł strona www), który chcesz zweryfikować pod kątem dezinformacji...",
+      placeholder: "Wklej tekst lub URL (YouTube, artykuł strona www), który chcesz zweryfikować pod kątem dezinformacji...",
       verifyButton: "Weryfikuj Treść",
       analyzingText: "Analizowanie...",
       analysisFailed: "Analiza Nieudana",
@@ -117,11 +113,6 @@ export default function Home() {
   const [language, setLanguage] = useState<Language>("pl")
   const t = translations[language]
 
-  // Auth and rate limiting state
-  const [user, setUser] = useState<any>(null)
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
-  const [rateLimitReached, setRateLimitReached] = useState({ image: false, text: false })
-
   // Image verification state
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -134,53 +125,6 @@ export default function Home() {
   const [textLoading, setTextLoading] = useState(false)
   const [textResult, setTextResult] = useState<any>(null)
   const [textError, setTextError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const supabase = createClient()
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      setUser(user)
-      setIsCheckingAuth(false)
-
-      // Check rate limits for anonymous users
-      if (!user) {
-        const imageCount = Number.parseInt(localStorage.getItem("anonymous_image_count") || "0")
-        const textCount = Number.parseInt(localStorage.getItem("anonymous_text_count") || "0")
-        setRateLimitReached({
-          image: imageCount >= 1,
-          text: textCount >= 1,
-        })
-      }
-    }
-    checkAuth()
-  }, [])
-
-  const saveToHistory = async (type: string, inputData: string, result: any) => {
-    if (!user) return
-
-    try {
-      const supabase = createClient()
-      await supabase.from("verification_history").insert({
-        user_id: user.id,
-        verification_type: type,
-        input_data: inputData,
-        result: result,
-      })
-    } catch (error) {
-      console.error("[v0] Failed to save to history:", error)
-    }
-  }
-
-  const updateAnonymousRateLimit = (type: "image" | "text") => {
-    if (user) return
-
-    const key = `anonymous_${type}_count`
-    const currentCount = Number.parseInt(localStorage.getItem(key) || "0")
-    localStorage.setItem(key, String(currentCount + 1))
-    setRateLimitReached((prev) => ({ ...prev, [type]: true }))
-  }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -200,15 +144,6 @@ export default function Home() {
 
   const verifyImage = async () => {
     if (!imageFile) return
-
-    if (!user && rateLimitReached.image) {
-      setImageError(
-        language === "pl"
-          ? "Osiągnięto limit weryfikacji. Zaloguj się, aby kontynuować."
-          : "Verification limit reached. Please log in to continue.",
-      )
-      return
-    }
 
     setImageLoading(true)
     setImageError(null)
@@ -230,9 +165,6 @@ export default function Home() {
 
       const result = await response.json()
       setImageResult(result)
-
-      await saveToHistory("image", imageFile.name, result)
-      updateAnonymousRateLimit("image")
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to verify image"
       setImageError(errorMessage)
@@ -252,15 +184,6 @@ export default function Home() {
 
   const verifyText = async () => {
     if (!text.trim()) return
-
-    if (!user && rateLimitReached.text) {
-      setTextError(
-        language === "pl"
-          ? "Osiągnięto limit weryfikacji. Zaloguj się, aby kontynuować."
-          : "Verification limit reached. Please log in to continue.",
-      )
-      return
-    }
 
     setTextLoading(true)
     setTextError(null)
@@ -289,23 +212,12 @@ export default function Home() {
 
       const result = await response.json()
       setTextResult(result)
-
-      await saveToHistory(isLink ? "link" : "text", inputText, result)
-      updateAnonymousRateLimit("text")
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to verify content"
       setTextError(errorMessage)
     } finally {
       setTextLoading(false)
     }
-  }
-
-  if (isCheckingAuth) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
   }
 
   return (
@@ -323,32 +235,6 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {user ? (
-                <>
-                  <Badge variant="outline" className="gap-2">
-                    <CheckCircle2 className="h-3 w-3" />
-                    {user.email}
-                  </Badge>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={async () => {
-                      const supabase = createClient()
-                      await supabase.auth.signOut()
-                      window.location.href = "/"
-                    }}
-                  >
-                    {language === "pl" ? "Wyloguj" : "Logout"}
-                  </Button>
-                  <Button variant="default" size="sm" asChild>
-                    <Link href="/dashboard">{language === "pl" ? "Panel" : "Dashboard"}</Link>
-                  </Button>
-                </>
-              ) : (
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/auth/login">{language === "pl" ? "Zaloguj się" : "Login"}</Link>
-                </Button>
-              )}
               <Button
                 variant={language === "pl" ? "default" : "outline"}
                 size="sm"
@@ -369,16 +255,6 @@ export default function Home() {
               </Button>
             </div>
           </div>
-          {!user && (
-            <Alert className="mt-4 border-yellow-500/50 bg-yellow-500/10">
-              <AlertCircle className="h-4 w-4 text-yellow-500" />
-              <AlertDescription className="text-sm">
-                {language === "pl"
-                  ? "Niezalogowani użytkownicy mogą wykonać tylko jedną weryfikację obrazu i jedną weryfikację tekstu. Zaloguj się, aby uzyskać nieograniczony dostęp."
-                  : "Anonymous users can perform only one image verification and one text verification. Log in for unlimited access."}
-              </AlertDescription>
-            </Alert>
-          )}
         </div>
       </header>
 
@@ -422,13 +298,12 @@ export default function Home() {
                         type="file"
                         accept="image/*"
                         onChange={handleImageChange}
-                        disabled={!user && rateLimitReached.image}
                         className="cursor-pointer file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-foreground file:transition-colors hover:file:bg-primary/90"
                       />
                     </div>
                     <Button
                       onClick={verifyImage}
-                      disabled={!imageFile || imageLoading || (!user && rateLimitReached.image)}
+                      disabled={!imageFile || imageLoading}
                       size="lg"
                       className="bg-primary hover:bg-primary/90"
                     >
@@ -548,7 +423,6 @@ export default function Home() {
                     placeholder={t.textVerification.placeholder}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    disabled={!user && rateLimitReached.text}
                     rows={8}
                     className="resize-none bg-muted/20 font-mono text-sm"
                   />
@@ -556,7 +430,7 @@ export default function Home() {
 
                 <Button
                   onClick={verifyText}
-                  disabled={!text.trim() || textLoading || (!user && rateLimitReached.text)}
+                  disabled={!text.trim() || textLoading}
                   size="lg"
                   className="w-full bg-primary hover:bg-primary/90"
                 >
