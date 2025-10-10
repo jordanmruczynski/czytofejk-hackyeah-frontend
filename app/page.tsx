@@ -219,12 +219,12 @@ export default function LandingPage() {
       <nav className="fixed top-0 z-50 w-full border-b border-border/40 backdrop-blur-md bg-background/80">
         <div className="mx-auto max-w-7xl px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 ring-2 ring-primary/20">
                 <Shield className="h-5 w-5 text-primary" />
               </div>
               <span className="text-xl font-bold">CzyToFejk</span>
-            </div>
+            </Link>
 
             <div className="hidden items-center gap-8 md:flex">
               <a href="#features" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
@@ -284,7 +284,12 @@ export default function LandingPage() {
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="gap-2 h-12 px-8 text-base bg-transparent">
+              <Button
+                size="lg"
+                variant="outline"
+                className="gap-2 h-12 px-8 text-base bg-transparent"
+                onClick={() => window.open("https://youtu.be/J57rrlp08zM", "_blank")}
+              >
                 {t.hero.ctaSecondary}
               </Button>
             </div>

@@ -19,6 +19,9 @@ import {
   Sparkles,
   Languages,
   LinkIcon,
+  Play,
+  Youtube,
+  MessageSquare,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -33,6 +36,13 @@ const translations = {
     tabs: {
       image: "Weryfikacja Obrazu",
       text: "Analiza Treści",
+    },
+    examples: {
+      title: "Popularne Przykłady Fake News",
+      subtitle: "Kliknij, aby przetestować weryfikację na prawdziwych przykładach",
+      videoExample: "Przykład Video",
+      textExample: "Przykład Tekstowy",
+      tryThis: "Wypróbuj ten przykład",
     },
     imageVerification: {
       title: "Wykrywanie Obrazów AI",
@@ -49,9 +59,11 @@ const translations = {
     },
     textVerification: {
       title: "Wykrywanie Dezinformacji",
-      description: "Analizuj skopiowaną treść tekstową, bądź podaj link url do YouTube, czy strony internetowej, aby sprawdzić je pod kątem potencjalnej dezinformacji",
+      description:
+        "Analizuj skopiowaną treść tekstową, bądź podaj link url do YouTube, czy strony internetowej, aby sprawdzić je pod kątem potencjalnej dezinformacji",
       textContent: "Treść Tekstowa lub URL",
-      placeholder: "Wklej tekst lub URL (YouTube, artykuł strona www), który chcesz zweryfikować pod kątem dezinformacji...",
+      placeholder:
+        "Wklej tekst lub URL (YouTube, artykuł strona www), który chcesz zweryfikować pod kątem dezinformacji...",
       verifyButton: "Weryfikuj Treść",
       analyzingText: "Analizowanie...",
       analysisFailed: "Analiza Nieudana",
@@ -73,6 +85,13 @@ const translations = {
     tabs: {
       image: "Image Verification",
       text: "Text Analysis",
+    },
+    examples: {
+      title: "Popular Fake News Examples",
+      subtitle: "Click to test verification on real examples",
+      videoExample: "Video Example",
+      textExample: "Text Example",
+      tryThis: "Try this example",
     },
     imageVerification: {
       title: "AI Image Detection",
@@ -220,54 +239,68 @@ export default function Home() {
     }
   }
 
+  const loadExample = (exampleText: string) => {
+    setText(exampleText)
+    setTextResult(null)
+    setTextError(null)
+    // Scroll to the text verification section
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-slate-900">
       <header className="border-b border-border/40 backdrop-blur-sm bg-card/30">
         <div className="mx-auto max-w-6xl px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-                <Shield className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight">{t.header.title}</h1>
-                <p className="text-sm text-muted-foreground">{t.header.subtitle}</p>
-              </div>
+              <a href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                  <Shield className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight">{t.header.title}</h1>
+                  <p className="text-sm text-muted-foreground">{t.header.subtitle}</p>
+                </div>
+              </a>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Button
-                variant={language === "pl" ? "default" : "outline"}
+                variant="outline"
                 size="sm"
-                onClick={() => setLanguage("pl")}
+                onClick={() => window.open("https://youtu.be/J57rrlp08zM", "_blank")}
                 className="gap-2"
               >
-                <Languages className="h-4 w-4" />
-                PL
+                <Play className="h-4 w-4" />
+                Demo
               </Button>
-              <Button
-                variant={language === "en" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setLanguage("en")}
-                className="gap-2"
-              >
-                <Languages className="h-4 w-4" />
-                EN
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={language === "pl" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLanguage("pl")}
+                  className="gap-2"
+                >
+                  <Languages className="h-4 w-4" />
+                  PL
+                </Button>
+                <Button
+                  variant={language === "en" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLanguage("en")}
+                  className="gap-2"
+                >
+                  <Languages className="h-4 w-4" />
+                  EN
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-8">
-        <Tabs defaultValue="image" className="w-full space-y-6">
+        <Tabs defaultValue="text" className="w-full space-y-6">
           <TabsList className="grid w-full grid-cols-2 bg-card/50 p-1 backdrop-blur-sm">
-            <TabsTrigger
-              value="image"
-              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              <ImageIcon className="h-4 w-4" />
-              <span className="font-medium">{t.tabs.image}</span>
-            </TabsTrigger>
             <TabsTrigger
               value="text"
               className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
@@ -275,133 +308,14 @@ export default function Home() {
               <FileText className="h-4 w-4" />
               <span className="font-medium">{t.tabs.text}</span>
             </TabsTrigger>
+            <TabsTrigger
+              value="image"
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <ImageIcon className="h-4 w-4" />
+              <span className="font-medium">{t.tabs.image}</span>
+            </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="image" className="space-y-6">
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardHeader className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-xl">{t.imageVerification.title}</CardTitle>
-                </div>
-                <CardDescription className="text-base">{t.imageVerification.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-3">
-                  <Label htmlFor="image-upload" className="text-sm font-medium">
-                    {t.imageVerification.selectImage}
-                  </Label>
-                  <div className="flex flex-col gap-4 sm:flex-row">
-                    <div className="flex-1">
-                      <Input
-                        id="image-upload"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="cursor-pointer file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-foreground file:transition-colors hover:file:bg-primary/90"
-                      />
-                    </div>
-                    <Button
-                      onClick={verifyImage}
-                      disabled={!imageFile || imageLoading}
-                      size="lg"
-                      className="bg-primary hover:bg-primary/90"
-                    >
-                      {imageLoading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t.imageVerification.analyzing}
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="mr-2 h-4 w-4" />
-                          {t.imageVerification.verifyButton}
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
-                {imagePreview && (
-                  <div className="overflow-hidden rounded-xl border-2 border-border/50 bg-muted/20 p-4">
-                    <img
-                      src={imagePreview || "/placeholder.svg"}
-                      alt="Preview"
-                      className="mx-auto max-h-80 rounded-lg object-contain"
-                    />
-                  </div>
-                )}
-
-                {imageError && (
-                  <Alert variant="destructive" className="border-destructive/50 bg-destructive/10">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle className="font-semibold">{t.imageVerification.verificationFailed}</AlertTitle>
-                    <AlertDescription>{imageError}</AlertDescription>
-                  </Alert>
-                )}
-
-                {imageResult && (
-                  <div className="space-y-4">
-                    <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
-                      <div className="flex items-start gap-3">
-                        <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
-                        <div className="flex-1 space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold">{t.imageVerification.analysisComplete}</span>
-                            <Badge variant="secondary" className="bg-primary/20 text-primary">
-                              {imageResult.status}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center gap-4 text-sm">
-                            <span className="text-muted-foreground">{t.imageVerification.confidenceScore}</span>
-                            <span className="font-mono text-lg font-bold text-primary">
-                              {imageResult.score?.toFixed(2) || "N/A"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {imageResult.models && imageResult.models.length > 0 && (
-                      <div className="space-y-3">
-                        <h4 className="flex items-center gap-2 text-sm font-semibold">
-                          <span className="h-1 w-1 rounded-full bg-primary" />
-                          {t.imageVerification.modelResults}
-                        </h4>
-                        <div className="grid gap-3 sm:grid-cols-2">
-                          {imageResult.models.map((model: any, idx: number) => (
-                            <div
-                              key={idx}
-                              className="rounded-lg border border-border/50 bg-card/50 p-4 backdrop-blur-sm transition-colors hover:border-primary/30"
-                            >
-                              <div className="flex items-start justify-between gap-2">
-                                <span className="font-medium text-sm">{model.name}</span>
-                                <Badge variant="outline" className="font-mono text-xs">
-                                  {model.score?.toFixed(2) || "N/A"}
-                                </Badge>
-                              </div>
-                              <div className="mt-2 text-xs text-muted-foreground">
-                                {t.imageVerification.status} {model.status}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <details className="group rounded-lg border border-border/50 bg-card/30 p-4">
-                      <summary className="cursor-pointer font-medium text-sm text-muted-foreground transition-colors group-open:text-foreground">
-                        {t.imageVerification.viewRawJson}
-                      </summary>
-                      <pre className="mt-3 overflow-auto rounded-md bg-muted/50 p-4 text-xs">
-                        <code className="text-muted-foreground">{JSON.stringify(imageResult, null, 2)}</code>
-                      </pre>
-                    </details>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           <TabsContent value="text" className="space-y-6">
             <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
@@ -522,6 +436,201 @@ export default function Home() {
                       </summary>
                       <pre className="mt-3 overflow-auto rounded-md bg-muted/50 p-4 text-xs">
                         <code className="text-muted-foreground">{JSON.stringify(textResult, null, 2)}</code>
+                      </pre>
+                    </details>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardHeader className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-xl">{t.examples.title}</CardTitle>
+                </div>
+                <CardDescription className="text-base">{t.examples.subtitle}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {/* YouTube Video Example */}
+                  <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-card/80 to-card/40 p-5 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10">
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-red-500/10 ring-2 ring-red-500/20">
+                        <Youtube className="h-6 w-6 text-red-500" />
+                      </div>
+                      <div className="flex-1 space-y-3">
+                        <div>
+                          <h4 className="font-semibold text-sm">{t.examples.videoExample}</h4>
+                          <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                            YouTube Shorts - Przykład potencjalnej dezinformacji
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => loadExample("https://www.youtube.com/shorts/8A-1b29qhgs")}
+                          className="w-full gap-2 border-primary/20 bg-primary/5 hover:bg-primary/10"
+                        >
+                          <Play className="h-3.5 w-3.5" />
+                          {t.examples.tryThis}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Text Example */}
+                  <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-card/80 to-card/40 p-5 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10">
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10 ring-2 ring-primary/20">
+                        <MessageSquare className="h-6 w-6 text-primary" />
+                      </div>
+                      <div className="flex-1 space-y-3">
+                        <div>
+                          <h4 className="font-semibold text-sm">{t.examples.textExample}</h4>
+                          <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                            Wypowiedź polityczna - analiza narracji
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            loadExample(
+                              "Oczywiście zaraz będą mówili, że że to jest narracja rosyjska i tak dalej i tak dalej, ale ja naprawdę mam wątpliwości. Jeżeli ze strony Kijowa, proszę państwa, tam leciały drony, ileś tam tych dronów, bo to podobno falowy taki nalot był i proszę państwa 600 km od naszej granicy, taki dron leci z prędkością 160, 170, no maksymalnie 180 km/h, to ile on godzin leciał, żeby do Polski dolecieć? Ja widzę w tym, proszę państwa, jakąś wielką powiedziałbym polityczną niedoskonałość, bo wczoraj akurat prezydent Nawrocki powiedział, że nie puścimy wojska polskiego na Ukrainę. No i macie według mnie",
+                            )
+                          }
+                          className="w-full gap-2 border-primary/20 bg-primary/5 hover:bg-primary/10"
+                        >
+                          <FileText className="h-3.5 w-3.5" />
+                          {t.examples.tryThis}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="image" className="space-y-6">
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardHeader className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-xl">{t.imageVerification.title}</CardTitle>
+                </div>
+                <CardDescription className="text-base">{t.imageVerification.description}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-3">
+                  <Label htmlFor="image-upload" className="text-sm font-medium">
+                    {t.imageVerification.selectImage}
+                  </Label>
+                  <div className="flex flex-col gap-4 sm:flex-row">
+                    <div className="flex-1">
+                      <Input
+                        id="image-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="cursor-pointer file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-foreground file:transition-colors hover:file:bg-primary/90"
+                      />
+                    </div>
+                    <Button
+                      onClick={verifyImage}
+                      disabled={!imageFile || imageLoading}
+                      size="lg"
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      {imageLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          {t.imageVerification.analyzing}
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="mr-2 h-4 w-4" />
+                          {t.imageVerification.verifyButton}
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                {imagePreview && (
+                  <div className="overflow-hidden rounded-xl border-2 border-border/50 bg-muted/20 p-4">
+                    <img
+                      src={imagePreview || "/placeholder.svg"}
+                      alt="Preview"
+                      className="mx-auto max-h-80 rounded-lg object-contain"
+                    />
+                  </div>
+                )}
+
+                {imageError && (
+                  <Alert variant="destructive" className="border-destructive/50 bg-destructive/10">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle className="font-semibold">{t.imageVerification.verificationFailed}</AlertTitle>
+                    <AlertDescription>{imageError}</AlertDescription>
+                  </Alert>
+                )}
+
+                {imageResult && (
+                  <div className="space-y-4">
+                    <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                      <div className="flex items-start gap-3">
+                        <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
+                        <div className="flex-1 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold">{t.imageVerification.analysisComplete}</span>
+                            <Badge variant="secondary" className="bg-primary/20 text-primary">
+                              {imageResult.status}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm">
+                            <span className="text-muted-foreground">{t.imageVerification.confidenceScore}</span>
+                            <span className="font-mono text-lg font-bold text-primary">
+                              {imageResult.score?.toFixed(2) || "N/A"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {imageResult.models && imageResult.models.length > 0 && (
+                      <div className="space-y-3">
+                        <h4 className="flex items-center gap-2 text-sm font-semibold">
+                          <span className="h-1 w-1 rounded-full bg-primary" />
+                          {t.imageVerification.modelResults}
+                        </h4>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          {imageResult.models.map((model: any, idx: number) => (
+                            <div
+                              key={idx}
+                              className="rounded-lg border border-border/50 bg-card/50 p-4 backdrop-blur-sm transition-colors hover:border-primary/30"
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <span className="font-medium text-sm">{model.name}</span>
+                                <Badge variant="outline" className="font-mono text-xs">
+                                  {model.score?.toFixed(2) || "N/A"}
+                                </Badge>
+                              </div>
+                              <div className="mt-2 text-xs text-muted-foreground">
+                                {t.imageVerification.status} {model.status}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <details className="group rounded-lg border border-border/50 bg-card/30 p-4">
+                      <summary className="cursor-pointer font-medium text-sm text-muted-foreground transition-colors group-open:text-foreground">
+                        {t.imageVerification.viewRawJson}
+                      </summary>
+                      <pre className="mt-3 overflow-auto rounded-md bg-muted/50 p-4 text-xs">
+                        <code className="text-muted-foreground">{JSON.stringify(imageResult, null, 2)}</code>
                       </pre>
                     </details>
                   </div>
